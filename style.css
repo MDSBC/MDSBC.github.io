@@ -272,7 +272,7 @@ label span{
         animation-delay: 4s, 5s;
         animation-fill-mode: forwards;
         border-bottom-color: var(--corBordaMain);
-        border-right-color: var(--corBordaMain);
+        border-left-color: var(--corBordaMain);
     }
     main .coluna{
         padding: 0;
