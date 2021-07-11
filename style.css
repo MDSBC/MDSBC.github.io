@@ -161,7 +161,9 @@ label span{
     width: 20px;
     height: 20px;
     display: block;
+    background-image: url('./assets/img/sol.png');
     background-color: #d4e9ff;
+    background-repeat: no-repeat;
     border-radius: 100%;
     transition: all ease .3s;
 }
@@ -169,7 +171,9 @@ label span{
     background-color: #d4e9ff;
 }
 .ativar-noturno:checked ~ .modo-noturno label span{
+    background-image: url('./assets/img/lua.png');
     background-color: var(--corBackgroundRodape);
+    background-repeat: no-repeat;
     transform: translateX(22px);
     transition: all ease .3s;
 }
