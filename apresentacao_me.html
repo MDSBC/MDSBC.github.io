@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tecnologia de Estêncil SMT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            overflow: hidden;
+        }
+
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px 80px;
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+            color: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-header {
+            border-bottom: 3px solid #e94560;
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #e94560;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 2.5em;
+            color: #e94560;
+            margin-bottom: 30px;
+        }
+
+        h3 {
+            font-size: 1.8em;
+            color: #00d9ff;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            color: #a8dadc;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        ul {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        li {
+            font-size: 1.3em;
+            line-height: 1.8;
+            margin: 15px 0;
+            padding-left: 40px;
+            position: relative;
+        }
+
+        li:before {
+            content: "▸";
+            color: #e94560;
+            font-size: 1.5em;
+            position: absolute;
+            left: 0;
+        }
+
+        .highlight-box {
+            background: rgba(233, 69, 96, 0.2);
+            border-left: 5px solid #e94560;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 5px;
+        }
+
+        .formula {
+            background: rgba(0, 217, 255, 0.1);
+            border: 2px solid #00d9ff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            font-size: 1.4em;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        button {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #ff6b88;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-number {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-size: 1.2em;
+            color: #a8dadc;
+        }
+
+        .footer {
+            margin-top: auto;
+            padding-top: 20px;
+            font-size: 0.9em;
+            color: #a8dadc;
+            text-align: center;
+        }
+
+        .authors {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #00d9ff;
+        }
+
+        .stat-box {
+            background: rgba(233, 69, 96, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 10px;
+        }
+
+        .stat-number {
+            font-size: 3em;
+            color: #e94560;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1 - Capa -->
+        <div class="slide active">
+            <div class="content" style="justify-content: center; text-align: center;">
+                <h1 style="font-size: 4em; margin-bottom: 30px;">Tecnologia de Estêncil</h1>
+                <p class="subtitle" style="font-size: 1.8em; margin-bottom: 20px;">
+                    Desafios da Impressão de Pasta de Solda em Placas SMT Complexas
+                </p>
+                <div class="authors">
+                    <p>Felipe de Brito Sales - 23101695</p>
+                    <p>Rangel Barbosa - 23101579</p>
+                </div>
+                <div class="footer">
+                    <p><strong>FATEC-SP</strong> | Curso de Eletrônica Industrial</p>
+                    <p>Prof. Mauricio Massazumi Oka</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2 - Introdução -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Introdução</h2>
+            </div>
+            <div class="content">
+                <h3>O Desafio da Miniaturização</h3>
+                <ul>
+                    <li>Placas PCB com tecnologia SMT cada vez mais complexas</li>
+                    <li>Componentes variam de 03015 até transformadores grandes</li>
+                    <li>Alta diversidade na mesma placa = desafios na impressão</li>
+                </ul>
+                <div class="highlight-box">
+                    <div class="stat-box">
+                        <div class="stat-number">60-70%</div>
+                        <div class="stat-label">dos defeitos após refusão originam-se na impressão de pasta</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3 - SIPLACE Demo Board -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>SIPLACE Demo Board</h2>
+            </div>
+            <div class="content">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+                    <div>
+                        <h3>Placa de Demonstração</h3>
+                        <ul>
+                            <li>Desenvolvida para ilustrar o espectro completo de componentes processáveis</li>
+                            <li>Do menor (03015) ao maior (transformadores)</li>
+                            <li>Exemplo perfeito de complexidade em montagem SMT</li>
+                            <li>Usada como base para este estudo de caso</li>
+                        </ul>
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="https://lh3.googleusercontent.com/d/1UbtaepGY3EQuuGn4yvViTqdK8du-6KNQ" alt="SIPLACE Demo Board" style="max-width: 100%; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                        <p style="font-size: 0.9em; color: #a8dadc; margin-top: 10px;">Fonte: ASM SIPLACE</p>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 20px;">
+                    <p style="font-size: 1.3em; text-align: center;">
+                        "A qualidade da soldagem depende diretamente da precisão da impressão de pasta"
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4 - Razão de Área -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Razão de Área (Area Ratio)</h2>
+            </div>
+            <div class="content">
+                <h3>Parâmetro Crítico #1</h3>
+                <p style="font-size: 1.3em; margin-bottom: 30px;">
+                    Determina se a pasta de solda será liberada corretamente da abertura do estêncil
+                </p>
+                <div class="formula">
+                    Razão de Área = Área da Abertura / Área da Parede Interna
+                </div>
+                <div class="highlight-box">
+                    <h3 style="color: #e94560;">Valores Recomendados:</h3>
+                    <ul>
+                        <li>Mínimo: <strong>0.68</strong> (comprovado na prática)</li>
+                        <li>Limite teórico: <strong>0.66</strong> (não recomendado)</li>
+                        <li>Vital não se aproximar do limite inferior</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5 - Regra da Esfera de Solda -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Regra da Esfera de Solda</h2>
+            </div>
+            <div class="content">
+                <h3>Aberturas Alongadas</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+                    <div>
+                        <p style="font-size: 1.3em; margin-bottom: 30px;">
+                            Define o tipo de pasta adequado baseado na menor abertura do estêncil
+                        </p>
+                        <div class="highlight-box">
+                            <h3>Requisito</h3>
+                            <p style="font-size: 1.5em; text-align: center; margin-top: 20px;">
+                                Mínimo de <strong style="color: #e94560;">4 a 5 esferas</strong><br>
+                                lado a lado no lado mais curto
+                            </p>
+                        </div>
+                        <p style="font-size: 1.2em; margin-top: 30px; text-align: center;">
+                            ⚠️ Evita entupimento das aberturas
+                        </p>
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="https://lh3.googleusercontent.com/d/1uAx2pCIgwvI-aQb1QP6DASvteiemrcVo" alt="Regra da Esfera" style="max-width: 100%; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                        <p style="font-size: 0.9em; color: #a8dadc; margin-top: 10px;">Fonte: ASM SIPLACE</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6 - Equação da Altura -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Espessura do Estêncil</h2>
+            </div>
+            <div class="content">
+                <h3>Equação da Altura para Formatos Circulares</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+                    <div>
+                        <div class="formula">
+                            t > 1,32 × d
+                        </div>
+                        <p style="font-size: 1.2em; margin: 20px 0; text-align: center;">
+                            Onde: <strong>t</strong> = espessura do estêncil<br>
+                            <strong>d</strong> = diâmetro da esfera de solda
+                        </p>
+                        <div class="highlight-box">
+                            <ul>
+                                <li><strong>6 esferas</strong> para formatos circulares</li>
+                                <li>Crítico para estênceis finos (t ≤ 60 μm)</li>
+                                <li>Verifica se pelo menos <strong>duas camadas</strong> de esferas permanecem na abertura</li>
+                                <li>Previne variações no volume depositado</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="https://lh3.googleusercontent.com/d/18g5jyP_0LPT6O3YWewk7BRQGm4qFNCvO" alt="Espessura do Estêncil" style="max-width: 100%; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                        <p style="font-size: 0.9em; color: #a8dadc; margin-top: 10px;">Fonte: ASM SIPLACE</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7 - Conflito de Volume -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>O Grande Desafio</h2>
+            </div>
+            <div class="content">
+                <h3>Conflito da Diversidade de Volume</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <div>
+                        <div class="two-column" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="stat-box">
+                                <h3 style="color: #00d9ff; font-size: 1.3em;">Componente 03015</h3>
+                                <p style="font-size: 1.1em; margin-top: 15px;">
+                                    ↓ Volume MÍNIMO<br>
+                                    Evitar curtos-circuitos<br>
+                                    Apenas 2 superfícies molháveis
+                                </p>
+                            </div>
+                            <div class="stat-box">
+                                <h3 style="color: #00d9ff; font-size: 1.3em;">Grandes Indutores</h3>
+                                <p style="font-size: 1.1em; margin-top: 15px;">
+                                    ↑ Volume MÁXIMO<br>
+                                    Conectores Pin-in-Paste<br>
+                                    Alta massa térmica
+                                </p>
+                            </div>
+                        </div>
+                        <div class="highlight-box" style="margin-top: 30px;">
+                            <p style="font-size: 1.2em; text-align: center;">
+                                ⚠️ Um estêncil de espessura única resultaria em:<br>
+                                <strong>Insuficiência de solda OU Excesso de solda</strong>
+                            </p>
+                        </div>
+                    </div>
+                    <div style="text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                        <img src="https://lh3.googleusercontent.com/d/1CCPJCjlfmvlumfauy5jBfu1tQgE-MxzZ" alt="Conflito de Volume" style="max-width: 100%; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                        <p style="font-size: 0.9em; color: #a8dadc; margin-top: 10px;">Fonte: ASM SIPLACE</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8 - Estêncil Escalonado -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>A Solução: Estêncil Escalonado</h2>
+            </div>
+            <div class="content">
+                <h3>Stepped Stencil Technology</h3>
+                <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center;">
+                    <div style="text-align: center;">
+                        <img src="https://lh3.googleusercontent.com/d/1I4hycvEhJx3tJduyhqZ7qM_4n0b1O2tK" alt="Estêncil Escalonado" style="max-width: 100%; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                        <p style="font-size: 0.9em; color: #a8dadc; margin-top: 10px;">Fonte: ASM SIPLACE</p>
+                    </div>
+                    <div>
+                        <div class="highlight-box">
+                            <p style="font-size: 1.3em; text-align: center; margin-bottom: 20px;">
+                                <strong>Múltiplas espessuras em um único estêncil</strong>
+                            </p>
+                        </div>
+                        <ul>
+                            <li><strong>Step-Down:</strong> Redução de espessura para componentes pequenos</li>
+                            <li><strong>Step-Up:</strong> Aumento de espessura para componentes grandes</li>
+                            <li>Cada componente recebe o volume exato necessário</li>
+                            <li>Solução essencial para placas complexas</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9 - Requisitos de Layout -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Requisitos de Layout do Estêncil Escalonado</h2>
+            </div>
+            <div class="content">
+                <h3>Folgas e Distâncias Mínimas</h3>
+                <ul>
+                    <li><strong>Folga para Squeegee:</strong> Distância necessária para a lâmina se adaptar às mudanças de altura</li>
+                    <li><strong>Distância mínima (c):</strong> ~0.3 mm da abertura até a borda do degrau</li>
+                    <li>Largura e comprimento mínimos nos degraus inferiores</li>
+                    <li>Considerar direção da lâmina durante design</li>
+                </ul>
+                <div class="highlight-box">
+                    <p style="font-size: 1.2em; text-align: center;">
+                        💡 Squeegees afinadas ajudam a reduzir o efeito das transições de degrau
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10 - Desafios de Design -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Desafios de Design Específicos</h2>
+            </div>
+            <div class="content">
+                <h3>Aberturas Grandes</h3>
+                <ul>
+                    <li>Aberturas com comprimento > 5 mm devem ser divididas por <strong>pontes (bridges)</strong></li>
+                    <li>Evita que a lâmina desça demais e remova pasta (scooping out)</li>
+                    <li>Em juntas planares grandes, frequentemente há excesso de pasta</li>
+                    <li>Necessário reduzir o volume impresso nestes casos</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 11 - Aplicação por Tipo de Componente -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Aplicação do Estêncil</h2>
+            </div>
+            <div class="content">
+                <h3>Por Tipo de Componente</h3>
+                <div class="two-column">
+                    <div>
+                        <div class="highlight-box">
+                            <h3>Componentes Pequenos</h3>
+                            <ul style="margin-top: 20px;">
+                                <li>Espessura base ou step-down</li>
+                                <li>Alta Razão de Área</li>
+                                <li>Volume mínimo</li>
+                                <li>Previne curtos</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="highlight-box">
+                            <h3>Componentes Grandes / PIP</h3>
+                            <ul style="margin-top: 20px;">
+                                <li>Áreas step-up</li>
+                                <li>Volume máximo</li>
+                                <li>Para indutores grandes</li>
+                                <li>Conectores furo passante</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12 - Glossário -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Glossário Técnico</h2>
+            </div>
+            <div class="content" style="font-size: 0.75em;">
+                <div style="display: grid; gap: 5px;">
+                    <div class="highlight-box" style="padding: 10px;">
+                        <h3 style="color: #00d9ff; margin-bottom: 2px; font-size: 1.1em;">Razão de Área (Area Ratio)</h3>
+                        <p style="line-height: 1.2; margin: 0;">Relação entre a área da abertura do estêncil e a área da parede interna. Valor mínimo recomendado: 0.66</p>
+                        <p style="font-size: 0.8em; color: #a8dadc; margin-top: 2px;"><em>Fonte: IPC-7525B Stencil Design Guidelines</em></p>
+                    </div>
+                    
+                    <div class="highlight-box" style="padding: 10px;">
+                        <h3 style="color: #00d9ff; margin-bottom: 2px; font-size: 1.1em;">Squeegee</h3>
+                        <p style="line-height: 1.2; margin: 0;">Lâmina (metálica ou de poliuretano) que espalha a pasta de solda sobre o estêncil durante a impressão</p>
+                        <p style="font-size: 0.8em; color: #a8dadc; margin-top: 2px;"><em>Fonte: Tecan SMT Stencils Technical Guide, 2023</em></p>
+                    </div>
+                    
+                    <div class="highlight-box" style="padding: 10px;">
+                        <h3 style="color: #00d9ff; margin-bottom: 2px; font-size: 1.1em;">Pin-in-Paste (PIP)</h3>
+                        <p style="line-height: 1.2; margin: 0;">Processo de soldagem de componentes com pinos passantes usando pasta de solda e refusão, também conhecido como Intrusive Reflow</p>
+                        <p style="font-size: 0.8em; color: #a8dadc; margin-top: 2px;"><em>Fonte: RayPCB Technical Documentation, 2023</em></p>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                        <div class="highlight-box" style="padding: 10px;">
+                            <h3 style="color: #00d9ff; margin-bottom: 2px; font-size: 1.1em;">Step-up</h3>
+                            <p style="line-height: 1.2; margin: 0;">Aumento localizado de espessura no estêncil para fornecer maior volume de pasta para componentes grandes</p>
+                            <p style="font-size: 0.8em; color: #a8dadc; margin-top: 2px;"><em>Fonte: ASM SIPLACE, 2017</em></p>
+                        </div>
+                        
+                        <div class="highlight-box" style="padding: 10px;">
+                            <h3 style="color: #00d9ff; margin-bottom: 2px; font-size: 1.1em;">Step-down</h3>
+                            <p style="line-height: 1.2; margin: 0;">Redução localizada de espessura no estêncil para componentes pequenos, mantendo razão de área adequada</p>
+                            <p style="font-size: 0.8em; color: #a8dadc; margin-top: 2px;"><em>Fonte: ASM SIPLACE, 2017</em></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13 - Conclusão -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Conclusão</h2>
+            </div>
+            <div class="content">
+                <h3>Pontos-Chave</h3>
+                <ul>
+                    <li>O estêncil é a ferramenta mais importante na montagem SMT</li>
+                    <li>Tecnologia escalonada é a solução primária para PCBs complexas</li>
+                    <li>Observação rigorosa das regras de design é essencial</li>
+                    <li>Razão de Área e Regra da Esfera de Solda são críticas</li>
+                    <li>Planejamento correto garante produção robusta e livre de falhas</li>
+                </ul>
+                <div class="highlight-box" style="margin-top: 40px;">
+                    <p style="font-size: 1.4em; text-align: center;">
+                        ✓ Supera o conflito de volume do 03015 aos grandes indutores
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13 - Referências -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Referências</h2>
+            </div>
+            <div class="content" style="justify-content: center;">
+                <div class="highlight-box">
+                    <h3 style="color: #00d9ff; margin-bottom: 30px;">Referencial Teórico</h3>
+                    <p style="font-size: 1.3em; line-height: 2;">
+                        ASM, ASYS, C. KOENEN, Fraunhofer IZM, HERAEUS, REHM e TDK Europe.<br>
+                        <strong>Complex Boards - a Challenge for SMT.</strong><br>
+                        Compêndio Técnico, 2017.
+                    </p>
+                </div>
+                <div style="text-align: center; margin-top: 50px;">
+                    <p style="font-size: 1.5em; color: #e94560;">
+                        Obrigado!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-number">
+        <span id="current-slide">1</span> / <span id="total-slides">13</span>
+    </div>
+
+    <div class="navigation">
+        <button id="prev-btn" onclick="previousSlide()">← Anterior</button>
+        <button id="next-btn" onclick="nextSlide()">Próximo →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Navegação por teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            }
+        });
+
+        // Inicializar
+        showSlide(0);
+    </script>
+</body>
+</html>
